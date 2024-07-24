@@ -2,6 +2,7 @@ import React from "react";
 import axios from "axios";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import { toast } from 'react-toastify';
 
 type CSVFileImportProps = {
   url: string;
@@ -33,14 +34,30 @@ export default function CSVFileImport({ url, title }: CSVFileImportProps) {
         params: {
           name: encodeURIComponent(file.name),
         },
+        headers: {
+          Authorization: `Basic ${localStorage.getItem("authorization_token")}`,
+        },
+      }).catch(err => {
+        toast.error('Authorization failed: verify or provide credentials', {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: false,
+            theme: "light",
+          });
       });
-      console.log("File to upload: ", file.name);
-      console.log("Uploading to: ", response.data);
-      const result = await fetch(response.data, {
-        method: "PUT",
-        body: file,
-      });
+
+      if (response) {
+        console.log("File to upload: ", file.name);
+        console.log("Uploading to: ", response.data);
+        const result = await fetch(response.data, {
+          method: "PUT",
+          body: file,
+        });
       console.log("Result: ", result);
+      }
       setFile(undefined);
     }
   };
