@@ -37,8 +37,23 @@ export default function CSVFileImport({ url, title }: CSVFileImportProps) {
         headers: {
           Authorization: `Basic ${localStorage.getItem("authorization_token")}`,
         },
-      }).catch(err => {
-        toast.error('Authorization failed: verify or provide credentials', {
+      })
+        .then(response => {
+          toast.success('File Uploaded!', {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: false,
+            theme: "light",
+          });
+
+          return response;
+       })
+      .catch(err => {
+        const message = err.response.data.message || 'reason unknown :(';
+        toast.error(`Uploading FAILED: ${message}`, {
             position: "top-right",
             autoClose: 5000,
             hideProgressBar: true,
